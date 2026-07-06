@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Log — Task Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="log-header">
+    <div>
+      <p class="eyebrow">Field Log · 01</p>
+      <h1>Task Tracker</h1>
+    </div>
+    <div class="header-right">
+      <div class="today-date" id="todayDate"></div>
+      <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="today">Today</button>
+    <button class="tab-btn" data-tab="analytics">Analytics</button>
+  </div>
+
+  <!-- ============ TODAY TAB ============ -->
+  <section class="tab-panel active" id="panel-today">
+
+    <div class="card entry-card">
+      <div class="entry-row">
+        <input type="text" id="taskInput" placeholder="What needs doing?" maxlength="120">
+        <select id="categoryInput">
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Learning">Learning</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="priorityInput">
+          <option value="High">High</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <input type="date" id="dueInput">
+        <button class="btn" id="addBtn">Add task</button>
+      </div>
+    </div>
+
+    <div class="card filter-card">
+      <div class="filter-row">
+        <input type="text" id="searchInput" placeholder="Search tasks…">
+        <select id="filterCategory">
+          <option value="All">All categories</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Learning">Learning</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="filterPriority">
+          <option value="All">All priorities</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <button class="btn btn-secondary" id="exportBtn">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="section-label">
+      <span>Open tasks</span>
+      <span id="openCount">0</span>
+    </div>
+    <ul class="task-list" id="openList"></ul>
+
+    <div class="section-label">
+      <span>Completed today</span>
+      <span id="doneCount">0</span>
+    </div>
+    <ul class="task-list" id="doneList"></ul>
+
+    <div class="section-label">
+      <span>Upcoming (next 7 days)</span>
+      <span id="upcomingCount">0</span>
+    </div>
+    <ul class="task-list" id="upcomingList"></ul>
+
+    <div class="card mood-card">
+      <p class="panel-title">How was today?</p>
+      <p class="panel-sub">One tap, end of day — builds a mood trail alongside your task history</p>
+      <div class="mood-options" id="moodOptions">
+        <button class="mood-emoji-btn" data-mood="😞">😞</button>
+        <button class="mood-emoji-btn" data-mood="😐">😐</button>
+        <button class="mood-emoji-btn" data-mood="🙂">🙂</button>
+        <button class="mood-emoji-btn" data-mood="😄">😄</button>
+        <button class="mood-emoji-btn" data-mood="🤩">🤩</button>
+      </div>
+      <div class="mood-week" id="moodWeek"></div>
+    </div>
+
+  </section>
+
+  <!-- ============ ANALYTICS TAB ============ -->
+  <section class="tab-panel" id="panel-analytics">
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="statStreak">0</div>
+        <div class="stat-label">Day streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statCompletion">0%</div>
+        <div class="stat-label">Completion rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statTotal">0</div>
+        <div class="stat-label">Tasks completed (all time)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statBest">—</div>
+        <div class="stat-label">Best day of week</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <p class="panel-title">This week</p>
+      <p class="panel-sub">Auto-generated summary of your last 7 days</p>
+      <div id="weeklySummary"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <p class="panel-title">Activity log</p>
+      <p class="panel-sub">Last 12 weeks — darker cell means more tasks closed that day</p>
+      <div class="heatmap-wrap">
+        <div class="heatmap" id="heatmap"></div>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="card">
+        <p class="panel-title">Completion by category</p>
+        <p class="panel-sub">Share of tasks finished, per category</p>
+        <div class="category-bars" id="categoryBars"></div>
+      </div>
+      <div class="card">
+        <p class="panel-title">14-day trend</p>
+        <p class="panel-sub">Tasks completed per day</p>
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="panel-title">Notes</p>
+      <p class="panel-sub">Patterns pulled from your own task history</p>
+      <div id="insights"></div>
+    </div>
+
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
